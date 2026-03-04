@@ -6,81 +6,81 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    --background: 0 0% 98%;
+    --foreground: 150 10% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 150 10% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 150 10% 15%;
 
-    --primary: 215 80% 48%;
+    --primary: 160 100% 27%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 15% 93%;
-    --secondary-foreground: 215 25% 25%;
+    --secondary: 150 10% 94%;
+    --secondary-foreground: 150 10% 25%;
 
-    --muted: 210 15% 95%;
-    --muted-foreground: 215 12% 50%;
+    --muted: 150 8% 95%;
+    --muted-foreground: 150 5% 45%;
 
-    --accent: 210 20% 90%;
-    --accent-foreground: 215 25% 20%;
+    --accent: 155 20% 92%;
+    --accent-foreground: 150 10% 20%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 215 80% 48%;
+    --border: 150 10% 90%;
+    --input: 150 10% 90%;
+    --ring: 160 100% 27%;
 
     --radius: 0.625rem;
 
-    /* Cubicle status colors */
-    --status-free: 142 71% 45%;
-    --status-free-bg: 142 71% 95%;
-    --status-occupied: 0 72% 51%;
-    --status-occupied-bg: 0 72% 96%;
-    --status-reserved: 38 92% 50%;
-    --status-reserved-bg: 38 92% 95%;
+    /* Cubicle status colors — green-based */
+    --status-free: 160 100% 27%;
+    --status-free-bg: 160 40% 96%;
+    --status-occupied: 152 69% 40%;
+    --status-occupied-bg: 152 50% 94%;
+    --status-reserved: 162 60% 55%;
+    --status-reserved-bg: 162 50% 95%;
 
     /* Chart colors */
-    --chart-1: 215 80% 48%;
-    --chart-2: 142 71% 45%;
-    --chart-3: 0 72% 51%;
-    --chart-4: 38 92% 50%;
-    --chart-5: 262 60% 55%;
+    --chart-1: 160 100% 27%;
+    --chart-2: 152 69% 40%;
+    --chart-3: 162 60% 55%;
+    --chart-4: 145 50% 65%;
+    --chart-5: 170 40% 45%;
 
-    --sidebar-background: 215 25% 12%;
-    --sidebar-foreground: 210 15% 85%;
-    --sidebar-primary: 215 80% 55%;
+    --sidebar-background: 160 20% 10%;
+    --sidebar-foreground: 150 10% 85%;
+    --sidebar-primary: 160 100% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 20% 18%;
-    --sidebar-accent-foreground: 210 15% 90%;
-    --sidebar-border: 215 20% 20%;
-    --sidebar-ring: 215 80% 55%;
+    --sidebar-accent: 160 15% 16%;
+    --sidebar-accent-foreground: 150 10% 90%;
+    --sidebar-border: 160 15% 18%;
+    --sidebar-ring: 160 100% 35%;
   }
 
   .dark {
-    --background: 215 25% 8%;
-    --foreground: 210 15% 93%;
-    --card: 215 25% 11%;
-    --card-foreground: 210 15% 93%;
-    --popover: 215 25% 11%;
-    --popover-foreground: 210 15% 93%;
-    --primary: 215 80% 55%;
+    --background: 160 15% 6%;
+    --foreground: 150 10% 93%;
+    --card: 160 15% 9%;
+    --card-foreground: 150 10% 93%;
+    --popover: 160 15% 9%;
+    --popover-foreground: 150 10% 93%;
+    --primary: 160 90% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 20% 18%;
-    --secondary-foreground: 210 15% 85%;
-    --muted: 215 20% 16%;
-    --muted-foreground: 215 12% 55%;
-    --accent: 215 20% 20%;
-    --accent-foreground: 210 15% 90%;
+    --secondary: 160 12% 16%;
+    --secondary-foreground: 150 10% 85%;
+    --muted: 160 12% 14%;
+    --muted-foreground: 150 8% 55%;
+    --accent: 160 15% 18%;
+    --accent-foreground: 150 10% 90%;
     --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20% 18%;
-    --input: 215 20% 18%;
-    --ring: 215 80% 55%;
+    --border: 160 12% 16%;
+    --input: 160 12% 16%;
+    --ring: 160 90% 40%;
   }
 }
 
@@ -104,5 +104,12 @@
   @keyframes cubicle-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
+  }
+  .glass-cubicle {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(0, 135, 94, 0.1);
   }
 }
