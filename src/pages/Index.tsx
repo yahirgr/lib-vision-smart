@@ -6,13 +6,25 @@ import { AdminPanel } from "@/components/AdminPanel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Shield, SlidersHorizontal, Building2, Layers } from "lucide-react";
+import { Eye, Shield, SlidersHorizontal, Building2, Layers, Lock } from "lucide-react";
 
 const Index = () => {
-  const [threshold, setThreshold] = useState(15);
-  const { cubicles, logs, stats, yoloStatus } = useCubicleSimulation(threshold);
-  const [floorFilter, setFloorFilter] = useState<"all" | "lower" | "upper">("all");
+  const [threshold, setThreshold] = useState(2);
+  const { cubicles, logs, stats, yoloStatus, reserveCubicle, simulateDetection } = useCubicleSimulation(threshold);
+  const [floorFilter, setFloorFilter] = useState<"lower" | "upper">("lower");
   const [statusFilter, setStatusFilter] = useState<"all" | "free">("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "standard" | "private">("all");
+
+  const floorCubicles = cubicles.filter((c) => c.floor === floorFilter);
+  const floorStats = {
+    total: floorCubicles.length,
+    free: floorCubicles.filter((c) => c.status === "free").length,
+    occupied: floorCubicles.filter((c) => c.status === "occupied").length,
+    reserved: floorCubicles.filter((c) => c.status === "reserved").length,
+    occupancyPercent: Math.round(
+      (floorCubicles.filter((c) => c.status !== "free").length / floorCubicles.length) * 100
+    ),
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,11 +36,11 @@ const Index = () => {
               <Eye className="h-4 w-4 text-primary-foreground" />
             </div>
             <h1 className="font-display text-lg font-bold tracking-tight">Lib-Vision AI</h1>
-            <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">v1.0</Badge>
+            <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">v2.0</Badge>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="h-2 w-2 rounded-full bg-status-free cubicle-pulse" />
-            <span className="hidden sm:inline">Sistema activo</span>
+            <span className="h-2 w-2 rounded-full bg-primary cubicle-pulse" />
+            <span className="hidden sm:inline">Sistema activo · {cubicles.length} cubículos</span>
           </div>
         </div>
       </header>
@@ -49,24 +61,31 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="student" className="space-y-4 mt-4">
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-              <div className="flex gap-1">
-                {(["all", "lower", "upper"] as const).map((f) => (
-                  <Button
-                    key={f}
-                    size="sm"
-                    variant={floorFilter === f ? "default" : "outline"}
-                    onClick={() => setFloorFilter(f)}
-                    className="text-xs h-7"
-                  >
-                    {f === "all" ? "Todas" : f === "lower" ? "Planta Baja" : "Planta Alta"}
-                  </Button>
-                ))}
+            {/* Floor Tabs */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex gap-1 bg-muted rounded-lg p-1">
+                <Button
+                  size="sm"
+                  variant={floorFilter === "lower" ? "default" : "ghost"}
+                  onClick={() => setFloorFilter("lower")}
+                  className="text-xs h-8"
+                >
+                  Planta Baja (111)
+                </Button>
+                <Button
+                  size="sm"
+                  variant={floorFilter === "upper" ? "default" : "ghost"}
+                  onClick={() => setFloorFilter("upper")}
+                  className="text-xs h-8"
+                >
+                  Planta Alta (45)
+                </Button>
               </div>
+
               <span className="text-border">|</span>
+
               <div className="flex gap-1">
+                <SlidersHorizontal className="h-4 w-4 text-muted-foreground mt-1" />
                 {(["all", "free"] as const).map((f) => (
                   <Button
                     key={f}
@@ -75,7 +94,24 @@ const Index = () => {
                     onClick={() => setStatusFilter(f)}
                     className="text-xs h-7"
                   >
-                    {f === "all" ? "Todos" : "Solo disponibles"}
+                    {f === "all" ? "Todos" : "Disponibles"}
+                  </Button>
+                ))}
+              </div>
+
+              <span className="text-border">|</span>
+
+              <div className="flex gap-1">
+                {(["all", "standard", "private"] as const).map((f) => (
+                  <Button
+                    key={f}
+                    size="sm"
+                    variant={typeFilter === f ? "default" : "outline"}
+                    onClick={() => setTypeFilter(f)}
+                    className="text-xs h-7 gap-1"
+                  >
+                    {f === "private" && <Lock className="h-3 w-3" />}
+                    {f === "all" ? "Todos" : f === "standard" ? "Estándar" : "Privados"}
                   </Button>
                 ))}
               </div>
@@ -84,33 +120,49 @@ const Index = () => {
             {/* Legend */}
             <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-sm border-2 border-status-free bg-status-free-bg" /> Libre
+                <span className="h-3 w-3 rounded-sm border-2 border-primary/40 bg-card" /> Libre
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-sm border-2 border-status-occupied bg-status-occupied-bg" /> Ocupado
+                <span className="h-3 w-3 rounded-sm bg-primary" /> Ocupado
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-sm border-2 border-status-reserved bg-status-reserved-bg" /> Apartado
+                <span className="h-3 w-3 rounded-sm border-2 border-status-reserved bg-status-reserved-bg" /> Reservado
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-sm glass-cubicle" /> Privado
               </span>
             </div>
 
-            <CubicleGrid cubicles={cubicles} floorFilter={floorFilter} statusFilter={statusFilter} />
+            {/* Floor stats */}
+            <div className="text-xs text-muted-foreground bg-accent/50 rounded-md p-2 flex gap-4">
+              <span><strong>{floorStats.free}</strong> libres</span>
+              <span><strong>{floorStats.occupied}</strong> ocupados</span>
+              <span><strong>{floorStats.reserved}</strong> reservados</span>
+              <span><strong>{floorStats.occupancyPercent}%</strong> ocupación</span>
+            </div>
+
+            <CubicleGrid
+              cubicles={cubicles}
+              floorFilter={floorFilter}
+              statusFilter={statusFilter}
+              typeFilter={typeFilter}
+              onReserve={reserveCubicle}
+            />
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
               <Layers className="h-3.5 w-3.5" />
-              Mostrando {cubicles.filter((c) =>
-                (floorFilter === "all" || c.floor === floorFilter) &&
-                (statusFilter === "all" || c.status === "free")
-              ).length} de {cubicles.length} cubículos
+              {floorFilter === "lower" ? "Planta Baja" : "Planta Alta"}: {floorCubicles.length} cubículos
             </div>
           </TabsContent>
 
           <TabsContent value="admin" className="mt-4">
             <AdminPanel
               logs={logs}
+              cubicles={cubicles}
               yoloStatus={yoloStatus}
               threshold={threshold}
               onThresholdChange={setThreshold}
+              onSimulate={simulateDetection}
             />
           </TabsContent>
         </Tabs>

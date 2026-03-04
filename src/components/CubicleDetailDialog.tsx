@@ -6,11 +6,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Package, User, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Clock, Package, User, Eye, Lock, Timer } from "lucide-react";
 
 interface Props {
   cubicle: Cubicle | null;
   onClose: () => void;
+  onReserve: (id: string) => void;
 }
 
 function formatDuration(from: Date | null): string {
@@ -24,16 +26,10 @@ function formatDuration(from: Date | null): string {
 const statusLabels = {
   free: "Libre",
   occupied: "Ocupado",
-  reserved: "Apartado",
+  reserved: "Reservado",
 };
 
-const statusColors = {
-  free: "bg-status-free-bg text-status-free border-status-free",
-  occupied: "bg-status-occupied-bg text-status-occupied border-status-occupied",
-  reserved: "bg-status-reserved-bg text-status-reserved border-status-reserved",
-};
-
-export function CubicleDetailDialog({ cubicle, onClose }: Props) {
+export function CubicleDetailDialog({ cubicle, onClose, onReserve }: Props) {
   if (!cubicle) return null;
 
   return (
@@ -42,8 +38,21 @@ export function CubicleDetailDialog({ cubicle, onClose }: Props) {
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-3">
             <Eye className="h-5 w-5 text-primary" />
-            Cubículo #{cubicle.id}
-            <Badge className={`${statusColors[cubicle.status]} border`}>
+            Cubículo #{cubicle.number}
+            {cubicle.type === "private" && (
+              <Badge variant="outline" className="text-[10px] gap-1">
+                <Lock className="h-2.5 w-2.5" /> Privado
+              </Badge>
+            )}
+            <Badge
+              className={`border ${
+                cubicle.status === "occupied"
+                  ? "bg-primary text-primary-foreground"
+                  : cubicle.status === "reserved"
+                  ? "bg-status-reserved-bg text-primary border-status-reserved"
+                  : "bg-card text-primary border-primary"
+              }`}
+            >
               {statusLabels[cubicle.status]}
             </Badge>
           </DialogTitle>
@@ -52,11 +61,21 @@ export function CubicleDetailDialog({ cubicle, onClose }: Props) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="font-medium">Planta:</span>
             {cubicle.floor === "lower" ? "Baja" : "Alta"}
+            <span className="mx-2">·</span>
+            <span className="font-medium">Tipo:</span>
+            {cubicle.type === "private" ? `Privado (${cubicle.capacity} personas)` : "Estándar"}
           </div>
+
+          {cubicle.reservationTimer !== null && cubicle.reservationTimer > 0 && (
+            <div className="flex items-center gap-2 text-sm bg-accent p-2 rounded-md">
+              <Timer className="h-4 w-4 text-primary cubicle-pulse" />
+              <span>Timer de reserva: <strong>{cubicle.reservationTimer}s</strong> restantes</span>
+            </div>
+          )}
 
           {cubicle.status === "occupied" && (
             <div className="flex items-center gap-2 text-sm">
-              <User className="h-4 w-4 text-status-occupied" />
+              <User className="h-4 w-4 text-primary" />
               <span>Persona detectada</span>
               <span className="ml-auto text-muted-foreground">
                 <Clock className="inline h-3 w-3 mr-1" />
@@ -65,7 +84,7 @@ export function CubicleDetailDialog({ cubicle, onClose }: Props) {
             </div>
           )}
 
-          {cubicle.status === "reserved" && (
+          {cubicle.status === "reserved" && cubicle.detectedObjects.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <Package className="h-4 w-4 text-status-reserved" />
@@ -83,6 +102,18 @@ export function CubicleDetailDialog({ cubicle, onClose }: Props) {
                 ))}
               </div>
             </div>
+          )}
+
+          {cubicle.status === "free" && (
+            <Button
+              onClick={() => {
+                onReserve(cubicle.id);
+                onClose();
+              }}
+              className="w-full"
+            >
+              Reservar Cubículo (2 min)
+            </Button>
           )}
 
           <div className="text-xs text-muted-foreground border-t pt-3">

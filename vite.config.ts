@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
         name: "Lib-Vision AI",
         short_name: "LibVision",
         description: "Gestión inteligente de cubículos de biblioteca con visión artificial",
-        theme_color: "#2563eb",
+        theme_color: "#00875E",
         background_color: "#f8fafc",
         display: "standalone",
         orientation: "portrait",

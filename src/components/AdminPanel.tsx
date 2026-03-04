@@ -1,23 +1,26 @@
-import { ActivityLog } from "@/hooks/useCubicleSimulation";
+import { ActivityLog, Cubicle } from "@/hooks/useCubicleSimulation";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import { Activity, AlertTriangle, Info, Zap, Cpu, Eye } from "lucide-react";
+import { SimulationPanel } from "./SimulationPanel";
 
 interface Props {
   logs: ActivityLog[];
+  cubicles: Cubicle[];
   yoloStatus: { fps: number; confidence: number; active: boolean };
   threshold: number;
   onThresholdChange: (val: number) => void;
+  onSimulate: (cubicleId: string, mode: "person" | "objects" | "empty") => void;
 }
 
 const logIcons = {
   info: <Info className="h-3.5 w-3.5 text-primary" />,
   warning: <AlertTriangle className="h-3.5 w-3.5 text-status-reserved" />,
-  alert: <Zap className="h-3.5 w-3.5 text-status-occupied" />,
+  alert: <Zap className="h-3.5 w-3.5 text-primary" />,
 };
 
-export function AdminPanel({ logs, yoloStatus, threshold, onThresholdChange }: Props) {
+export function AdminPanel({ logs, cubicles, yoloStatus, threshold, onThresholdChange, onSimulate }: Props) {
   return (
     <div className="space-y-6">
       {/* YOLO Status */}
@@ -29,7 +32,7 @@ export function AdminPanel({ logs, yoloStatus, threshold, onThresholdChange }: P
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="flex items-center justify-center gap-1.5 mb-1">
-              <span className={`h-2 w-2 rounded-full ${yoloStatus.active ? "bg-status-free cubicle-pulse" : "bg-status-occupied"}`} />
+              <span className={`h-2 w-2 rounded-full ${yoloStatus.active ? "bg-primary cubicle-pulse" : "bg-destructive"}`} />
               <span className="text-xs text-muted-foreground">Estado</span>
             </div>
             <p className="text-sm font-semibold">{yoloStatus.active ? "Activo" : "Inactivo"}</p>
@@ -51,6 +54,9 @@ export function AdminPanel({ logs, yoloStatus, threshold, onThresholdChange }: P
         </div>
       </div>
 
+      {/* Simulation Panel */}
+      <SimulationPanel cubicles={cubicles} onSimulate={onSimulate} />
+
       {/* Threshold Config */}
       <div className="rounded-lg border bg-card p-4">
         <h3 className="font-display font-semibold text-sm mb-3">⏱ Umbral de liberación automática</h3>
@@ -59,14 +65,14 @@ export function AdminPanel({ logs, yoloStatus, threshold, onThresholdChange }: P
             value={[threshold]}
             onValueChange={(v) => onThresholdChange(v[0])}
             min={1}
-            max={60}
+            max={10}
             step={1}
             className="flex-1"
           />
           <span className="text-sm font-semibold min-w-[4rem] text-right">{threshold} min</span>
         </div>
         <p className="text-xs text-muted-foreground mt-2">
-          Cubículos apartados se liberan automáticamente tras {threshold} minutos sin actividad humana.
+          Cubículos apartados se liberan automáticamente tras {threshold} minutos sin actividad.
         </p>
       </div>
 
@@ -89,7 +95,7 @@ export function AdminPanel({ logs, yoloStatus, threshold, onThresholdChange }: P
                     <p className="text-muted-foreground mt-0.5">{log.timestamp.toLocaleTimeString("es-MX")}</p>
                   </div>
                   <Badge variant="outline" className="text-[10px] shrink-0">
-                    #{log.cubicleId}
+                    {log.cubicleId}
                   </Badge>
                 </div>
               ))}
