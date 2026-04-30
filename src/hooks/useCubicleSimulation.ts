@@ -157,6 +157,33 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
     );
   }, [addLog]);
 
+  // QR Check-in: marks cubicle as occupied and persists to localStorage
+  const checkInCubicle = useCallback((cubicleId: string) => {
+    const now = new Date();
+    setCubicles((prev) =>
+      prev.map((c) => {
+        if (c.id !== cubicleId) return c;
+        addLog(c.id, `Cubículo #${c.number}: Check-in vía QR confirmado → Ocupado`, "info");
+        toast.success(`Check-in exitoso en Cubículo #${c.number}`, {
+          description: "El sistema Lib-Vision ha confirmado tu presencia.",
+        });
+        const checkins = loadQrCheckins();
+        checkins[c.id] = now.toISOString();
+        saveQrCheckins(checkins);
+        return {
+          ...c,
+          status: "occupied" as CubicleStatus,
+          personDetected: true,
+          detectedObjects: c.detectedObjects.length ? c.detectedObjects : randomObjects(),
+          occupiedSince: now,
+          reservedSince: null,
+          reservationTimer: null,
+          lastUpdate: now,
+        };
+      })
+    );
+  }, [addLog]);
+
   // Manual simulation: set detection state for a cubicle
   const simulateDetection = useCallback((cubicleId: string, mode: "person" | "objects" | "empty" | "overcapacity") => {
     const now = new Date();
