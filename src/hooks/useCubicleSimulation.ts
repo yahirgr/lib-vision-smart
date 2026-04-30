@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { toast } from "sonner";
 
 export type CubicleStatus = "free" | "occupied" | "reserved";
 export type FloorType = "lower" | "upper";
@@ -119,11 +120,24 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
   }, [addLog]);
 
   // Manual simulation: set detection state for a cubicle
-  const simulateDetection = useCallback((cubicleId: string, mode: "person" | "objects" | "empty") => {
+  const simulateDetection = useCallback((cubicleId: string, mode: "person" | "objects" | "empty" | "overcapacity") => {
     const now = new Date();
     setCubicles((prev) =>
       prev.map((c) => {
         if (c.id !== cubicleId) return c;
+        if (mode === "overcapacity") {
+          addLog(c.id, `Cubículo #${c.number}: Exceso de personas detectado (capacidad ${c.capacity})`, "alert");
+          return {
+            ...c,
+            status: "occupied" as CubicleStatus,
+            personDetected: true,
+            detectedObjects: randomObjects(),
+            occupiedSince: c.occupiedSince || now,
+            reservedSince: null,
+            reservationTimer: null,
+            lastUpdate: now,
+          };
+        }
         if (mode === "person") {
           addLog(c.id, `Cubículo #${c.number}: persona detectada manualmente → Ocupado`, "info");
           return {
@@ -322,5 +336,19 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
     ),
   };
 
-  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection };
+  const criticalAlerts = logs.filter((l) => l.type === "alert" && l.message.includes("Exceso"));
+
+  // Toast on new critical alert
+  const lastAlertId = useRef<string | null>(null);
+  useEffect(() => {
+    const newest = criticalAlerts[0];
+    if (newest && newest.id !== lastAlertId.current) {
+      if (lastAlertId.current !== null) {
+        toast.error(newest.message, { description: newest.timestamp.toLocaleTimeString("es-MX") });
+      }
+      lastAlertId.current = newest.id;
+    }
+  }, [criticalAlerts]);
+
+  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection, criticalAlerts };
 }

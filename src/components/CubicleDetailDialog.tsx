@@ -8,19 +8,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Package, User, Eye, Lock, Timer } from "lucide-react";
+import { formatDuration } from "@/lib/cubicle-utils";
 
 interface Props {
   cubicle: Cubicle | null;
   onClose: () => void;
   onReserve: (id: string) => void;
-}
-
-function formatDuration(from: Date | null): string {
-  if (!from) return "—";
-  const mins = Math.round((Date.now() - from.getTime()) / 60000);
-  if (mins < 1) return "< 1 min";
-  if (mins < 60) return `${mins} min`;
-  return `${Math.floor(mins / 60)}h ${mins % 60}m`;
 }
 
 const statusLabels = {

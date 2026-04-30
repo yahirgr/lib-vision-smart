@@ -4,14 +4,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import { Activity, AlertTriangle, Info, Zap, Cpu, Eye } from "lucide-react";
 import { SimulationPanel } from "./SimulationPanel";
+import { CriticalAlertsPanel } from "./CriticalAlertsPanel";
 
 interface Props {
   logs: ActivityLog[];
   cubicles: Cubicle[];
+  criticalAlerts: ActivityLog[];
   yoloStatus: { fps: number; confidence: number; active: boolean };
   threshold: number;
   onThresholdChange: (val: number) => void;
-  onSimulate: (cubicleId: string, mode: "person" | "objects" | "empty") => void;
+  onSimulate: (cubicleId: string, mode: "person" | "objects" | "empty" | "overcapacity") => void;
 }
 
 const logIcons = {
@@ -20,11 +22,13 @@ const logIcons = {
   alert: <Zap className="h-3.5 w-3.5 text-primary" />,
 };
 
-export function AdminPanel({ logs, cubicles, yoloStatus, threshold, onThresholdChange, onSimulate }: Props) {
+export function AdminPanel({ logs, cubicles, criticalAlerts, yoloStatus, threshold, onThresholdChange, onSimulate }: Props) {
   return (
     <div className="space-y-6">
+      <CriticalAlertsPanel alerts={criticalAlerts} />
+
       {/* YOLO Status */}
-      <div className="rounded-lg border bg-card p-4">
+      <div className="rounded-xl border bg-card p-4 shadow-sm hover:shadow-md transition-all duration-300">
         <h3 className="font-display font-semibold text-sm flex items-center gap-2 mb-3">
           <Cpu className="h-4 w-4 text-primary" />
           Estado del Modelo YOLO

@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Shield, SlidersHorizontal, Building2, Layers, Lock } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LiveClock } from "@/components/LiveClock";
 
 const Index = () => {
   const [threshold, setThreshold] = useState(2);
-  const { cubicles, logs, stats, yoloStatus, reserveCubicle, simulateDetection } = useCubicleSimulation(threshold);
+  const { cubicles, logs, stats, yoloStatus, reserveCubicle, simulateDetection, criticalAlerts } = useCubicleSimulation(threshold);
   const [floorFilter, setFloorFilter] = useState<"lower" | "upper">("lower");
   const [statusFilter, setStatusFilter] = useState<"all" | "free">("all");
   const [typeFilter, setTypeFilter] = useState<"all" | "standard" | "private">("all");
@@ -32,15 +34,19 @@ const Index = () => {
       <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Eye className="h-4 w-4 text-primary-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary shadow-sm">
+              <Eye className="h-4 w-4 text-primary-foreground" strokeWidth={2} />
             </div>
             <h1 className="font-display text-lg font-bold tracking-tight">Lib-Vision AI</h1>
             <Badge variant="secondary" className="text-[10px] hidden sm:inline-flex">v2.0</Badge>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="h-2 w-2 rounded-full bg-primary cubicle-pulse" />
-            <span className="hidden sm:inline">Sistema activo · {cubicles.length} cubículos</span>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="h-2 w-2 rounded-full bg-primary cubicle-pulse" />
+              <span>{cubicles.length} cubículos</span>
+            </div>
+            <LiveClock />
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -159,6 +165,7 @@ const Index = () => {
             <AdminPanel
               logs={logs}
               cubicles={cubicles}
+              criticalAlerts={criticalAlerts}
               yoloStatus={yoloStatus}
               threshold={threshold}
               onThresholdChange={setThreshold}

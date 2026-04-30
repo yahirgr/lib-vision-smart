@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Cubicle } from "@/hooks/useCubicleSimulation";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Package, XCircle, Zap } from "lucide-react";
+import { User, Package, XCircle, Zap, AlertTriangle } from "lucide-react";
 
 interface Props {
   cubicles: Cubicle[];
-  onSimulate: (cubicleId: string, mode: "person" | "objects" | "empty") => void;
+  onSimulate: (cubicleId: string, mode: "person" | "objects" | "empty" | "overcapacity") => void;
 }
 
 export function SimulationPanel({ cubicles, onSimulate }: Props) {
@@ -16,7 +16,7 @@ export function SimulationPanel({ cubicles, onSimulate }: Props) {
   const allCubicles = cubicles.slice(0, 50);
 
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="rounded-xl border bg-card p-4 shadow-sm hover:shadow-md transition-all duration-300">
       <h3 className="font-display font-semibold text-sm flex items-center gap-2 mb-3">
         <Zap className="h-4 w-4 text-primary" />
         Panel de Simulación Manual
@@ -40,32 +40,22 @@ export function SimulationPanel({ cubicles, onSimulate }: Props) {
         </Select>
 
         {selectedId && (
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              size="sm"
-              onClick={() => onSimulate(selectedId, "person")}
-              className="gap-1 text-xs"
-            >
-              <User className="h-3 w-3" />
+          <div className="grid grid-cols-2 gap-2">
+            <Button size="sm" onClick={() => onSimulate(selectedId, "person")} className="gap-1 text-xs">
+              <User className="h-3 w-3" strokeWidth={2} />
               Persona
             </Button>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => onSimulate(selectedId, "objects")}
-              className="gap-1 text-xs"
-            >
-              <Package className="h-3 w-3" />
+            <Button size="sm" variant="secondary" onClick={() => onSimulate(selectedId, "objects")} className="gap-1 text-xs">
+              <Package className="h-3 w-3" strokeWidth={2} />
               Objetos
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onSimulate(selectedId, "empty")}
-              className="gap-1 text-xs"
-            >
-              <XCircle className="h-3 w-3" />
+            <Button size="sm" variant="outline" onClick={() => onSimulate(selectedId, "empty")} className="gap-1 text-xs">
+              <XCircle className="h-3 w-3" strokeWidth={2} />
               Vacío
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => onSimulate(selectedId, "overcapacity")} className="gap-1 text-xs">
+              <AlertTriangle className="h-3 w-3" strokeWidth={2} />
+              Exceso
             </Button>
           </div>
         )}
