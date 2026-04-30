@@ -33,7 +33,7 @@ function getStatusClasses(status: CubicleStatus): string {
   }
 }
 
-export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, onReserve }: Props) {
+export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, onReserve, onCheckIn }: Props) {
   const [selected, setSelected] = useState<Cubicle | null>(null);
   const [qrCubicle, setQrCubicle] = useState<Cubicle | null>(null);
 
