@@ -153,6 +153,7 @@ const Index = () => {
               statusFilter={statusFilter}
               typeFilter={typeFilter}
               onReserve={reserveCubicle}
+              onCheckIn={checkInCubicle}
             />
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
