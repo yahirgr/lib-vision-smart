@@ -93,7 +93,7 @@ export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, o
       </div>
 
       <CubicleDetailDialog cubicle={selected} onClose={() => setSelected(null)} onReserve={onReserve} />
-      <CubicleQRDialog cubicle={qrCubicle} onClose={() => setQrCubicle(null)} />
+      <CubicleQRDialog cubicle={qrCubicle} onClose={() => setQrCubicle(null)} onCheckIn={onCheckIn} />
     </>
   );
 }
