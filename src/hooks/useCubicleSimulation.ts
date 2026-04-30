@@ -415,5 +415,5 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
     }
   }, [criticalAlerts]);
 
-  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection, criticalAlerts };
+  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection, checkInCubicle, criticalAlerts };
 }
