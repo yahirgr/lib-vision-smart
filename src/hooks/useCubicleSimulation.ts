@@ -80,8 +80,46 @@ function makeCubicle(num: number, floor: FloorType, type: CubicleType, capacity:
   };
 }
 
+const QR_CHECKIN_KEY = "libvision:qr-checkins";
+
+function loadQrCheckins(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(QR_CHECKIN_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveQrCheckins(map: Record<string, string>) {
+  try {
+    localStorage.setItem(QR_CHECKIN_KEY, JSON.stringify(map));
+  } catch {
+    /* noop */
+  }
+}
+
 export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
-  const [cubicles, setCubicles] = useState<Cubicle[]>(initCubicles);
+  const [cubicles, setCubicles] = useState<Cubicle[]>(() => {
+    const base = initCubicles();
+    const checkins = loadQrCheckins();
+    return base.map((c) => {
+      if (checkins[c.id]) {
+        const since = new Date(checkins[c.id]);
+        return {
+          ...c,
+          status: "occupied" as CubicleStatus,
+          personDetected: true,
+          detectedObjects: c.detectedObjects.length ? c.detectedObjects : randomObjects(),
+          occupiedSince: since,
+          reservedSince: null,
+          reservationTimer: null,
+          lastUpdate: new Date(),
+        };
+      }
+      return c;
+    });
+  });
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [yoloStatus, setYoloStatus] = useState({ fps: 24, confidence: 0.87, active: true });
   const logIdCounter = useRef(0);
