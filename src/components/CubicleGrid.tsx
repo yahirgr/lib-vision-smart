@@ -12,6 +12,7 @@ interface Props {
   statusFilter: "all" | "free";
   typeFilter: "all" | "standard" | "private";
   onReserve: (id: string) => void;
+  onCheckIn: (id: string) => void;
 }
 
 const statusLabels: Record<CubicleStatus, string> = {
