@@ -80,46 +80,8 @@ function makeCubicle(num: number, floor: FloorType, type: CubicleType, capacity:
   };
 }
 
-const QR_CHECKIN_KEY = "libvision:qr-checkins";
-
-function loadQrCheckins(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(QR_CHECKIN_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveQrCheckins(map: Record<string, string>) {
-  try {
-    localStorage.setItem(QR_CHECKIN_KEY, JSON.stringify(map));
-  } catch {
-    /* noop */
-  }
-}
-
 export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
-  const [cubicles, setCubicles] = useState<Cubicle[]>(() => {
-    const base = initCubicles();
-    const checkins = loadQrCheckins();
-    return base.map((c) => {
-      if (checkins[c.id]) {
-        const since = new Date(checkins[c.id]);
-        return {
-          ...c,
-          status: "occupied" as CubicleStatus,
-          personDetected: true,
-          detectedObjects: c.detectedObjects.length ? c.detectedObjects : randomObjects(),
-          occupiedSince: since,
-          reservedSince: null,
-          reservationTimer: null,
-          lastUpdate: new Date(),
-        };
-      }
-      return c;
-    });
-  });
+  const [cubicles, setCubicles] = useState<Cubicle[]>(initCubicles);
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [yoloStatus, setYoloStatus] = useState({ fps: 24, confidence: 0.87, active: true });
   const logIdCounter = useRef(0);
@@ -153,33 +115,6 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
           };
         }
         return c;
-      })
-    );
-  }, [addLog]);
-
-  // QR Check-in: marks cubicle as occupied and persists to localStorage
-  const checkInCubicle = useCallback((cubicleId: string) => {
-    const now = new Date();
-    setCubicles((prev) =>
-      prev.map((c) => {
-        if (c.id !== cubicleId) return c;
-        addLog(c.id, `Cubículo #${c.number}: Check-in vía QR confirmado → Ocupado`, "info");
-        toast.success(`Check-in exitoso en Cubículo #${c.number}`, {
-          description: "El sistema Lib-Vision ha confirmado tu presencia.",
-        });
-        const checkins = loadQrCheckins();
-        checkins[c.id] = now.toISOString();
-        saveQrCheckins(checkins);
-        return {
-          ...c,
-          status: "occupied" as CubicleStatus,
-          personDetected: true,
-          detectedObjects: c.detectedObjects.length ? c.detectedObjects : randomObjects(),
-          occupiedSince: now,
-          reservedSince: null,
-          reservationTimer: null,
-          lastUpdate: now,
-        };
       })
     );
   }, [addLog]);
@@ -415,5 +350,5 @@ export function useCubicleSimulation(releaseThresholdMinutes: number = 2) {
     }
   }, [criticalAlerts]);
 
-  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection, checkInCubicle, criticalAlerts };
+  return { cubicles, logs, stats, yoloStatus, addLog, reserveCubicle, simulateDetection, criticalAlerts };
 }

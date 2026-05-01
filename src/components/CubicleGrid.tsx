@@ -12,7 +12,6 @@ interface Props {
   statusFilter: "all" | "free";
   typeFilter: "all" | "standard" | "private";
   onReserve: (id: string) => void;
-  onCheckIn: (id: string) => void;
 }
 
 const statusLabels: Record<CubicleStatus, string> = {
@@ -33,7 +32,7 @@ function getStatusClasses(status: CubicleStatus): string {
   }
 }
 
-export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, onReserve, onCheckIn }: Props) {
+export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, onReserve }: Props) {
   const [selected, setSelected] = useState<Cubicle | null>(null);
   const [qrCubicle, setQrCubicle] = useState<Cubicle | null>(null);
 
@@ -93,7 +92,7 @@ export function CubicleGrid({ cubicles, floorFilter, statusFilter, typeFilter, o
       </div>
 
       <CubicleDetailDialog cubicle={selected} onClose={() => setSelected(null)} onReserve={onReserve} />
-      <CubicleQRDialog cubicle={qrCubicle} onClose={() => setQrCubicle(null)} onCheckIn={onCheckIn} />
+      <CubicleQRDialog cubicle={qrCubicle} onClose={() => setQrCubicle(null)} />
     </>
   );
 }

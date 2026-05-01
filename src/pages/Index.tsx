@@ -12,7 +12,7 @@ import { LiveClock } from "@/components/LiveClock";
 
 const Index = () => {
   const [threshold, setThreshold] = useState(2);
-  const { cubicles, logs, stats, yoloStatus, reserveCubicle, simulateDetection, checkInCubicle, criticalAlerts } = useCubicleSimulation(threshold);
+  const { cubicles, logs, stats, yoloStatus, reserveCubicle, simulateDetection, criticalAlerts } = useCubicleSimulation(threshold);
   const [floorFilter, setFloorFilter] = useState<"lower" | "upper">("lower");
   const [statusFilter, setStatusFilter] = useState<"all" | "free">("all");
   const [typeFilter, setTypeFilter] = useState<"all" | "standard" | "private">("all");
@@ -153,7 +153,6 @@ const Index = () => {
               statusFilter={statusFilter}
               typeFilter={typeFilter}
               onReserve={reserveCubicle}
-              onCheckIn={checkInCubicle}
             />
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
