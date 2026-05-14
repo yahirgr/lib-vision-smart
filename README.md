@@ -1,73 +1,48 @@
-# Welcome to your Lovable project
 
-## Project info
+# Lib-Vision AI
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+| Matricula | Nombre                           | Carrera | Brigada |
+| --------- | -------------------------------- | ------- | ------- |
+| 1995329   | Fernando Yahir García Dávila     | ITS     | 305     |
+| 1820338   | José Antonio Pérez Sepúlveda     | ITS     | 305     |
+| 1998752   | Jesús Osvaldo Hernández Villegas | ITS     | 305     |
+| 1952530   | Ever Alejandro Martínez Arizpe   | ITS     | 305     |
+| 2039440   | Luis Mario Cantú Villarreal      | ITS     | 305     |
 
-## How can I edit this code?
+### COMO EJECUTAR NUESTRO PROYECTO?
 
-There are several ways of editing your application.
+Para ejecutar nuestro proyecto, se necesita tener Node.js instalado con npm. Los cuales se pueden conseguir en su página oficial: https://nodejs.org/en/download 
 
-**Use Lovable**
+También necesitas  ejecutar el powershell como administrador y ejecutar el comando **Set-ExecutionPolicy Unrestricted**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Una vez instalado, se navega a la carpeta donde está descargado este proyecto, lib-vision-smart-main y se abre terminal.
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+Se corre lo siguiente:
+```
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
+
 ```
 
-**Edit a file directly in GitHub**
+Una vez hecho, verás esto en tu terminal:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+  VITE v5.4.19  ready in 438 ms
 
-**Use GitHub Codespaces**
+  ➜  Local:   http://localhost:8080/
+  ➜  Network: http://192.168.56.1:8080/
+  ➜  Network: http://192.168.1.87:8080/
+  ➜  press h + enter to show help
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Se accede al local para poder visualizar nuestra página web. 
 
-## What technologies are used for this project?
+### QUE TECNOLOGÍAS UTILIZAMOS PARA NUESTRO PROYECTO?
 
-This project is built with:
+Utilizamos:
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
